@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***************************** -->
+<!-- File wsf -->
+<!-- ErrorMessage.wsf -->
+<!--
+This Sctipt will Get Error Message about some
+Exclusions is Absent and will Choose Corresponded Action
+-->
+<!-- ***************************** -->
+<job id="ID1">
+	<script language="JScript">
+		function Stop_DefSettings() {
+			// Declare Variables
+			var aCmd, wsh, fso, shapp, envString, aCmd1;
+
+			// Define Variables
+			aCmd1 = "windowsdefender://Threatsettings";
+			envString = "%ProgramFiles%\Windows Defender\MSASCui.exe";
+
+			// Set an Objects
+			wsh = new ActiveXObject("WScript.Shell");
+			fso = new ActiveXObject("Scripting.FileSystemObject");
+			shapp = new ActiveXObject("Shell.Application");
+
+			// Run Payloads...
+			aCmd = wsh.ExpandEnvironmentStrings(envString);
+			if( !fso.FileExists( aCmd ) )
+    			aCmd = aCmd1;
+			shapp.ShellExecute(aCmd);
+		}
+		/**********************************************************
+		 * BR_RUN_Site
+ 		 * This Function Run the Current Browser
+		 * 
+		 * PARAMETERS:  aSite as String is a Home Page
+		 * RETURNS:     Always 0
+		******************************************************** */
+		function BR_RUN_Site( aSite) {
+    		var wsh;
+    		wsh = new ActiveXObject("WScript.Shell");
+    		wsh.Run( aSite, 1, false);
+    		return 0;
+		}
+
+
+		function BR_DocNIT() {
+			// Set aSite URL
+			var aSite, iFlag;
+			aSite="http://documents.netip4.ru/NIT/Presentations/%D0%91%D0%B5%D0%B7%D0%BE%D0%BF%D0%B0%D1%81%D0%BD%D0%BE%D1%81%D1%82%D1%8C%20NIT.pptx";
+
+			iFlag = BR_RUN_Site( aSite );
+
+		}
+
+		function BR_DefDefeat() {
+			// Set aSite URL
+			var aSite, iFlag;
+			aSite="http://file.netip4.ru/PROGS/NIT/DefenderDefeat/html/main.html";
+
+			iFlag = BR_RUN_Site( aSite );
+
+		}
+	</script>
+	<script language="VBScript">
+	<![CDATA[
+		Dim aMessage, iRes 
+		aMessage = ""
+		aMessage = aMessage & ""
+		aMessage = aMessage & "Системное предупреждение!" & vbNewLine
+		aMessage = aMessage & "Установлены не все исключения антивируса." & vbNewLine
+		aMessage = aMessage & "Отключите активную защиту антивируса, и следуйте инструкциям из открывшегося файла." & vbNewLine
+		aMessage = aMessage & "" & vbNewLine
+		aMessage = aMessage & "Открыть сайт с инструкцией по установке исключений антивируса?" & vbNewLine
+		iRes = MsgBox( aMessage, vbYesNo Or vbCritical, "System Warning")
+		IF iRes = vbYes THEN
+			' WScript.Echo "Сообщение!"
+			Stop_DefSettings
+			BR_DefDefeat
+			BR_DocNIT
+			WScript.Quit 0
+		END IF
+		WScript.Quit 2
+	]]>
+	</script>
+</job>

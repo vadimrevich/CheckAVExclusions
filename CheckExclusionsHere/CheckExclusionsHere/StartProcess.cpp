@@ -1,0 +1,870 @@
+#define no_init_all deprecated
+#include "StartProcess.h"
+#include <Windows.h>
+#include <iostream>
+// #include <processthreadsapi.h>
+// #include <synchapi.h>
+#include "UserDirectories.h"
+
+void StartProcess::SetPaths()
+{
+	UserDirectories stdVar;
+	strCmdPath = stdVar.GetCMDEXEPath();
+	strCmd32Path = stdVar.GetCMD32EXEPath();
+	strWPoshPath = stdVar.GetPOSHEXEPath();
+	strCscriptPath = stdVar.GetCSCRIPTEXEPath();
+	strCscript32Path = stdVar.GetCSCRIPT32EXEPath();
+	strWPosh32Path = stdVar.GetPOSH32EXEPath();
+	strMSIExecPath = stdVar.GetMSIEXECPath();
+	strWMICPath = stdVar.GetWMIEXEPath();
+	strNotepadPath = stdVar.GetNOTEPADEXEPath();
+	strRegExe32Path = stdVar.GetRegEXE32Path();
+	strRegExePath = stdVar.GetRegEXEPath();
+	strDismExePath = stdVar.GetDISMEXEPath();
+	strWusaExePath = stdVar.GetWusaEXEPath();
+	strMsHtaPath = stdVar.GetMsHtaEXEPath();
+}
+
+int StartProcess::StartAsFile(string strFile, int iTimeOut) {
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+
+	if (strCmdPath.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Executable File.\n";
+		return 1;
+	}
+
+	strCmdLine = " /c start /wait /realtime /b " + strFile;
+
+
+	DWORD dwTimeOut;
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(strCmdPath.c_str(),
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strFile << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strFile << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strFile << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strFile << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+int StartProcess::StartAsNotepad(string strFile, int iTimeOut) {
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	DWORD dwTimeOut;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+	if (strNotepadPath.length() == 0) {
+		std::cerr << "Check Integrity Error! The Notepad Path " << strNotepadPath << " does not exist!\n";
+		return 1;
+	}
+
+	strCmdLine = strNotepadPath + " \"" + strFile + "\"";
+
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strNotepadPath << " " << strCmdLine << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strNotepadPath << " " << strCmdLine << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strNotepadPath << " " << strCmdLine << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+
+		// Close Process and Thread handles
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strNotepadPath << " " << strCmdLine << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+int StartProcess::StartAsCmdFile(string strFile, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	DWORD dwTimeOut;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+	if (strCmdPath.length() == 0) {
+		std::cerr << "Check Integrity Error! The Cmd.Exe Path " << strCmdPath << " does not exist!\n";
+		return 1;
+	}
+
+	strCmdLine = strCmdPath + " /c \"" + strFile + "\"";
+
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strCmdPath << " " << strFile << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strCmdPath << " " << strFile << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strCmdPath << " " << strFile << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+
+	// Close Process and Thread handles
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strCmdPath << " " << strFile << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+int StartProcess::StartAsCScriptFiles(string strFile, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	DWORD dwTimeOut;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+	if (strCscriptPath.length() == 0) {
+		std::cerr << "Check Integrity Error! The CScript.Exe Path " << strCscriptPath << " does not exist!\n";
+		return 1;
+	}
+
+	strCmdLine = strCscriptPath + " //NoLogo \"" + strFile + "\"";
+
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strCscriptPath << " " << strFile << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strCscriptPath << " " << strFile << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strCscriptPath << " " << strFile << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+
+	// Close Process and Thread handles
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strCscriptPath << " " << strFile << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+int StartProcess::StartAsPoshFile(string strFile, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	DWORD dwTimeOut;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+	if (strWPoshPath.length() == 0) {
+		std::cerr << "Check Integrity Error! The Powershel.Exe Path " << strWPoshPath << " does not exist!\n";
+		return 1;
+	}
+
+	// strCmdLine = strWPoshPath + " -NoLogo -NoProfile -NoExit -ExecutionPolicy Bypass  -File \"" + strFile + "\"";
+	// strCmdLine = strWPoshPath + " -NoLogo -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass  -File \"" + strFile + "\"";
+	strCmdLine = strWPoshPath + " -NoLogo -NoProfile -ExecutionPolicy Bypass  -File \"" + strFile + "\"";
+
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strWPoshPath << " " << strFile << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strWPoshPath << " " << strFile << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strWPoshPath << " " << strFile << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+
+	// Close Process and Thread handles
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strWPoshPath << " " << strFile << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+
+int StartProcess::StartFile(string strFile, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+
+	strCmdLine = strCmdPath + " /c START /WAIT /REALTIME /B " + strFile;
+
+	DWORD dwTimeOut;
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		std::cerr << "Process Creation Failed (" << GetLastError() << ").\n";
+		return 1;
+	}
+	else
+	{
+		if (dwTimeOut == 0) {
+			WaitForSingleObject(pri.hProcess, INFINITE);
+			std::cout << "Process " << strFile << " is Terminated Successfully!\n";
+		}
+		else
+		{
+			WaitForSingleObject(pri.hProcess, dwTimeOut);
+			std::cout << "Process " << strFile << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+		}
+
+		if (!TerminateProcess(pri.hProcess, 0))
+			std::cerr << "Process " << GetProcessId(pri.hProcess) << " is not Terminated!\n";
+		// Close Process and Thread handles
+		CloseHandle(pri.hProcess);
+		CloseHandle(pri.hThread);
+	}
+	return 0;
+}
+
+
+int StartProcess::StartAsRegEXELine(string strArg, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strArg.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Argument.\n";
+		return 1;
+	}
+
+	if (strRegExePath.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Executable File.\n";
+		return 1;
+	}
+
+	strCmdLine = strRegExePath + " " + strArg;
+
+	DWORD dwTimeOut;
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strRegExePath << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strRegExePath << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strRegExePath << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strRegExePath << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+int StartProcess::StartAsRegEXE32Line(string strArg, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strArg.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Argument.\n";
+		return 1;
+	}
+
+	if (strRegExe32Path.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Executable File.\n";
+		return 1;
+	}
+
+	strCmdLine = strRegExe32Path + " " + strArg;
+
+	DWORD dwTimeOut;
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strRegExe32Path << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strRegExe32Path << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strRegExe32Path << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strRegExe32Path << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+int StartProcess::StartAsDismEXELine(string strArg, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strArg.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Argument.\n";
+		return 1;
+	}
+
+	if (strDismExePath.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Executable File.\n";
+		return 1;
+	}
+
+	strCmdLine = strDismExePath + " " + strArg;
+
+	DWORD dwTimeOut;
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strDismExePath << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strDismExePath << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strDismExePath << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strDismExePath << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+int StartProcess::StartAsWusaEXELine(string strArg, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strArg.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Argument.\n";
+		return 1;
+	}
+
+	if (strWusaExePath.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty Executable File.\n";
+		return 1;
+	}
+
+	strCmdLine = strWusaExePath + " " + strArg;
+
+	DWORD dwTimeOut;
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(NULL,
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strWusaExePath << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strWusaExePath << " is Terminated Successfully!\n";
+
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strWusaExePath << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strWusaExePath << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+
+	return 0;
+}
+
+
+int StartProcess::StartAsMsHtaEXEFile(string strFile, int iTimeOut)
+{
+	// TODO: Добавьте сюда код реализации.
+	STARTUPINFOA stInfo;
+	PROCESS_INFORMATION pri;
+	DWORD dwTimeOut;
+	string strCmdLine;
+
+	DWORD dwsi_size = sizeof(stInfo);
+	ZeroMemory(&stInfo, dwsi_size);
+	stInfo.cb = dwsi_size;
+	ZeroMemory(&pri, sizeof(pri));
+
+	if (strFile.length() == 0) {
+		std::cerr << "Process Error! Can\'t Run Empty File.\n";
+		return 1;
+	}
+	if (strMsHtaPath.length() == 0) {
+		std::cerr << "Check Integrity Error! The MsHta.Exe Path " << strMsHtaPath << " does not exist!\n";
+		return 1;
+	}
+	if (strCmdPath.length() == 0) {
+		std::cerr << "Check Integrity Error! The Cmd.Exe Path " << strCmdPath << " does not exist!\n";
+		return 1;
+	}
+
+//	strCmdLine = strMsHtaPath + " \"" + strFile + "\"";
+	strCmdLine = " /c " + strMsHtaPath + " " + strFile;
+
+	try
+	{
+		dwTimeOut = iTimeOut * 1000;
+	}
+	catch (const std::exception&)
+	{
+		dwTimeOut = 0;
+	}
+
+	// Start Child Process
+	if (!CreateProcessA(strCmdPath.c_str(),
+		(LPSTR)strCmdLine.c_str(),
+		NULL,
+		NULL,
+		false,
+		IDLE_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&stInfo,
+		&pri
+	)) {
+		DWORD dr = GetLastError();
+		std::cerr << "Process Creation " << strMsHtaPath << " " << strFile << " Failed (" << dr << ").\n";
+		// ProcessErrorAndQuit(dr);
+		return 1;
+	}
+	
+	CloseHandle(pri.hThread);
+
+	if (dwTimeOut == 0) {
+		WaitForSingleObject(pri.hProcess, INFINITE);
+		std::cout << "Process " << strMsHtaPath << " " << strFile << " is Terminated Successfully!\n";
+		
+	}
+	else
+	{
+		WaitForSingleObject(pri.hProcess, dwTimeOut);
+		std::cout << "Process " << strMsHtaPath << " " << strFile << " is Terminated after " << dwTimeOut << " milliseconds!\n";
+	}
+
+	DWORD dwExitCode;
+	GetExitCodeProcess(pri.hProcess, &dwExitCode);
+
+	std::cout << "Process " << strMsHtaPath << " " << strFile << " PID: " << GetProcessId(pri.hProcess) << " Terminated witn code: " << dwExitCode << std::endl;
+
+	// Close Process and Thread handles
+	CloseHandle(pri.hProcess);
+		
+	return 0;
+}
