@@ -103,7 +103,11 @@ int DownloadAndExecute::CheckExclusion()
 	int iSleep = 90; //1,5 Minutes
 
 	// Run Payloads
-	Download();
+	// Download();
+	iRes = UnzipEicarFile();
+	if (iRes > 0)
+		return 2;
+	iRes = 0;
 	CopyAndDelete();
 	iRes = OpenAndCLose();
 
@@ -114,4 +118,12 @@ int DownloadAndExecute::CheckExclusion()
 		return 0;
 	else
 		return 1;
+}
+
+
+int DownloadAndExecute::UnzipEicarFile()
+{
+	// TODO: Добавьте сюда код реализации.
+	
+	return dnld.UnzipEicarFile();
 }

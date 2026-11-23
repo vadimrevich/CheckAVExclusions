@@ -3,13 +3,13 @@
 #define no_init_all deprecated
 #include <Windows.h>
 #include <iostream>
-//#include <urlmon.h>
-#include <wininet.h>
+#include <urlmon.h>
+//#include <wininet.h>
 // #include <afx.h>
 //#include <afxinet.h>
 #include "UserDirectories.h"
-#pragma comment(lib,"wininet")
-//#pragma comment(lib, "urlmon.lib")
+// #pragma comment(lib,"wininet")
+#pragma comment(lib, "urlmon")
 
 #define RECVPACK_SIZE 2048
 #define MAXBLOCKSIZE 1024
@@ -39,7 +39,7 @@ void Downloads::SetUserDocumentsPath() {
 	UserDirectories stdVar;
 	string strRes = stdVar.GetUserDocumentsPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes  + "\\" + aFileName + ".txt";
+		aLocalPath = strRes  + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -49,7 +49,7 @@ void Downloads::SetUserProfilePath() {
 	UserDirectories stdVar;
 	string strRes = stdVar.GetUserProfilePath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -60,7 +60,7 @@ void Downloads::SetSystemAActDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetSystemAACtDir();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -71,7 +71,7 @@ void Downloads::SetSystemKMSDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetSystemKMSDir();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -82,7 +82,7 @@ void Downloads::SetSystemKMSAutoSDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetSystemKMSAutoSDir();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -93,7 +93,7 @@ void Downloads::SetNITBinDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetNITBinPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -104,7 +104,7 @@ void Downloads::SetNITElevationDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetNITElevationPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -115,7 +115,7 @@ void Downloads::SetNITSysUpDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetNITSYSUPPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -126,7 +126,7 @@ void Downloads::SetNITProgDataDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetNITProgDataDir();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -137,7 +137,7 @@ void Downloads::SetNITPubDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetPubPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -148,7 +148,7 @@ void Downloads::SetNITPub1Dir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetNITPub1Path();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -159,7 +159,7 @@ void Downloads::SetZlovredDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetZlovredPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -170,7 +170,7 @@ void Downloads::SetNITUtilDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetNITUtilPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -181,7 +181,7 @@ void Downloads::SetRServer30Dir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetRServer30Path();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -192,7 +192,7 @@ void Downloads::SetUserDesktopDir()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetMyDesktopPath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");
@@ -201,6 +201,10 @@ void Downloads::SetUserDesktopDir()
 void Downloads::Download() {
 	UserDirectories stdVar;
 	BOOL bRes;
+	HRESULT hResult;
+
+	// cerr << "localPath: " << aLocalPath.c_str() << endl;
+	// cerr << "an Url: " << anURL.c_str() << endl;
 
 	if (stdVar.IsFileExist(aLocalPath)) {
 		try
@@ -217,8 +221,8 @@ void Downloads::Download() {
 
 	try
 	{
-		// hResult = URLDownloadToFileA(NULL, anURL.c_str(), aLocalPath.c_str(), 0, NULL);
-		Download_WinInet(anURL.c_str(), aLocalPath.c_str());
+		hResult = URLDownloadToFileA(NULL, anURL.c_str(), aLocalPath.c_str(), 0, NULL);
+		// Download_WinInet(anURL.c_str(), aLocalPath.c_str());
 	}
 	catch (const std::exception&)
 	{
@@ -226,9 +230,48 @@ void Downloads::Download() {
 		aLocalPath = string("");
 		return;
 	}
-	// std::cout << "Success Downloads File: " << aLocalPath << "\n";
+	if(hResult == S_OK) {
+		// std::cout << "Success Downloads File: " << aLocalPath << "\n";
+		return;
+	}
+	else if (hResult == E_OUTOFMEMORY) {
+		std::cerr << "Can\'t to Download a File " << aLocalPath << " from an URL " << anURL << ". Insufficient Memory." << "\n";
+		return;
+	}
+	else if (hResult == INET_E_DOWNLOAD_FAILURE) {
+		std::cerr << "Can\'t to Download a File " << aLocalPath << " from an URL " << anURL << ". Internet Error." << "\n";
+		return;
+	}
+	else {
+		std::cerr << "Can\'t to Download a File " << aLocalPath << " from an URL " << anURL << ". Unknown Error." << "\n";
+		return;
+	}
+	
 }
 
+int Downloads::UnzipEicarFile() {
+	string strCmd;
+	UserDirectories stdVar;
+	if (aZipPass.length() == 0)
+		strCmd = aUnzipPath + string(" -o -j ") + aZipFilePath + string(" \"") + aFileName + string("\" -d  \"") + stdVar.GetCurrentExePath() + string("\"") + string(" > nul");
+	else
+		strCmd = aUnzipPath + string(" -P ") + aZipPass + string(" -o -j ") + aZipFilePath + string(" \"") + aFileName + string("\" -d  \"") + stdVar.GetCurrentExePath() + string("\"") + string(" > nul");
+	if (!stdVar.IsFileExist(aUnzipPath)) {
+		std::cerr << "Check Integrity Error. Package File is not Founf." << std::endl;
+		std::cerr << "The file " << aUnzipPath << " is not found!" << std::endl;
+		return 1;
+	}
+	if (!stdVar.IsFileExist(aZipFilePath)) {
+		std::cerr << "Check Integrity Error. Package File is not Founf." << std::endl;
+		std::cerr << "The file " << aZipFilePath << " is not found!" << std::endl;
+		return 1;
+	}
+	system(strCmd.c_str());
+	std::this_thread::sleep_for(std::chrono::milliseconds(ZIPTIMEOUT));
+	return 0;
+}
+
+/*
 void Download_WinInet(const char *Url, const char *filename){
 byte Temp[MAXBLOCKSIZE];
 ULONG Number = 1;
@@ -260,6 +303,7 @@ if (hSession != NULL)
 	hSession = NULL;
 }
 }
+*/
 
 /***
 bool DownloadSaveFiles(char* url, char *strSaveFile) {//Download the file and save it as a new file name
@@ -364,7 +408,7 @@ void Downloads::SetCurrrentExePath()
 	UserDirectories stdVar;
 	string strRes = stdVar.GetCurrentExePath();
 	if (strRes.length() > 0 && aFileName.length() > 0) {
-		aLocalPath = strRes + "\\" + aFileName + ".txt";
+		aLocalPath = strRes + "\\" + aFileName;
 	}
 	else
 		aLocalPath = string("");

@@ -62,12 +62,16 @@ $RECYCLE.BIN/
 *.tar
 *.gz
 *.bz
+*.bzip
 *.bzip2
 *.bz2
 *.tgz
 *.arj
+*.ace
 *.lha
 *.iso
+*.Z
+*.xz
 
 # Large media files
 *.mp4
@@ -89,6 +93,7 @@ $RECYCLE.BIN/
 *.log
 *.bak
 *.o
+*.so
 
 # Windows Installer files
 *.cab
@@ -96,6 +101,19 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.msu
+
+# Linux Installer Files
+*.deb
+*.rpm
+
+# OS Images
+*.iso
+*.ova
+*.ovf
+*.vmdk
+*.vdi
+*.vhd
+*.vhdx
 
 # Windows shortcuts
 *.lnk
@@ -130,5 +148,5 @@ TEST/
 # ========================
 Scripts/*.7z
 Scripts/*.SFX.exe
-#C/
+# C/
 

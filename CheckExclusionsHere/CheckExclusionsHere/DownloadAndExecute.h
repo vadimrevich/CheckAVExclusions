@@ -26,5 +26,6 @@ public:
 	void CopyAndDelete();
 	int OpenAndCLose();
 	int CheckExclusion();
+	int UnzipEicarFile();
 };
 
